@@ -1,22 +1,24 @@
 package com.sky.controller.admin;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.service.impl.EmployeeServiceImpl;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
+
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +78,7 @@ public class EmployeeController {
 
     /**
      * 添加用户
-     * @param employeeLoginDTO
+     * @param
      * @return
      */
     @PostMapping
@@ -84,6 +86,26 @@ public class EmployeeController {
     public Result addEmployee(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工：{}",employeeDTO);
         employeeService.save(employeeDTO);
+        return Result.success();
+    }
+
+    /**
+     * 员工分页查询
+     * @param pageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation("员工的分页查询")
+    public Result<PageResult> page(EmployeePageQueryDTO pageQueryDTO){
+        log.info("员工的分页查询，参数为：{}",pageQueryDTO);
+        PageResult pageResult=employeeService.pageQuery(pageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    @PostMapping("status/{status}")
+    public Result StartOrStop(@PathVariable Integer status,Long id){
+        log.info("员工状态和id是：{}，{}",status,id);
+        employeeService.StartOrStop(status,id);
         return Result.success();
     }
 
