@@ -46,4 +46,10 @@
         </where>
         order by sort
     </select>
+    <select id="selectByType" resultType="com.sky.entity.Category" parameterType="Integer">
+        select *from category where status=1
+        <if test="type!=null">
+            and type=#{type}
+        </if>
+    </select>
 </mapper>

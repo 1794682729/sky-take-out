@@ -8,9 +8,11 @@ import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
 import com.sky.mapper.CategoryMapper;
+import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
 import org.apache.poi.ss.formula.functions.T;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ import java.util.List;
 public class CategoryServiceImp implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private DishMapper dishMapper;
 
     @Override
     public void addCategory(CategoryDTO categoryDTO) {
@@ -77,4 +82,11 @@ public class CategoryServiceImp implements CategoryService {
     public void deleteCategory(Long id) {
         categoryMapper.deleteCategoryById(id);
     }
+
+    @Override
+    public List<Category> selectCategoryByType(Integer type) {
+        return categoryMapper.selectByType(type);
+    }
+
+
 }

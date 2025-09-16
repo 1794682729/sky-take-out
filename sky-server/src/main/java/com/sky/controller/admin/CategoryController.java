@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequestMapping("/admin/category")
@@ -84,6 +86,13 @@ public class CategoryController {
         log.info("删除的菜品id是:{}",id);
         categoryService.deleteCategory(id);
         return  Result.success();
+    }
+    @ApiOperation("根据type查询菜品分类")
+    @GetMapping("/list")
+    public Result<List> selectCategoryById( Integer type) {
+       List<Category> list= categoryService.selectCategoryByType(type);
+
+        return Result.success(list);
     }
 
 }
