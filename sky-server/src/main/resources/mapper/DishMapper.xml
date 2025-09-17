@@ -8,4 +8,18 @@
         VALUES (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser})
 
     </insert>
+    <select id="selectPageQuery" resultType="com.sky.vo.DishVO">
+        select d.*,ca.name categoryName from dish as d left join category as ca on d.category_id = ca.id
+        <where>
+            <if test="name !=null">
+                and d.name like concat('%',#{name},'%')
+            </if>
+            <if test="status !=null">
+                and status=#{status}
+            </if>
+            <if test="categoryId !=null">
+                and category_id=#{categoryId}
+            </if>
+        </where>
+    </select>
 </mapper>
