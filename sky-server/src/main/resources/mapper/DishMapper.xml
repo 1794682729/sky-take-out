@@ -8,6 +8,12 @@
         VALUES (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser})
 
     </insert>
+    <delete id="deletBatch">
+        delete from dish where id in
+        <foreach collection="dishIds" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </delete>
     <select id="selectPageQuery" resultType="com.sky.vo.DishVO">
         select d.*,ca.name categoryName from dish as d left join category as ca on d.category_id = ca.id
         <where>
@@ -21,5 +27,12 @@
                 and category_id=#{categoryId}
             </if>
         </where>
+    </select>
+    <select id="selectByIds" resultType="com.sky.entity.Dish"  >
+        select * from dish where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+
     </select>
 </mapper>

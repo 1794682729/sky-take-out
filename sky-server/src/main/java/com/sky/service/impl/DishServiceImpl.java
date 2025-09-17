@@ -2,12 +2,16 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -27,6 +31,9 @@ public class DishServiceImpl implements DishService {
     private DishMapper dishMapper;
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
+
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
     /**
      * 新增菜品的口味数据
      * @param dishDTO
@@ -60,5 +67,37 @@ public class DishServiceImpl implements DishService {
         Page<DishVO> page=dishMapper.selectPageQuery(dishPageQueryDTO);
 
         return new PageResult(page.getTotal(),page.getResult());
+    }
+
+    /**
+     * 删除菜品
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+        //根据传入的id查询返回选中的菜品集合
+       List<Dish> list= dishMapper.selectByIds(ids);
+
+       //循环遍历返回的菜品集合，判断当前菜品是否是起售中，如果是起售中，抛出异常禁止删除，如果未起售则放行
+       for (Dish dish : list) {
+           if (dish.getStatus()== StatusConstant.ENABLE){
+               throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+           }
+       }
+       //判断菜品是否被套餐关联
+
+       List<Long> setmealIds= setmealDishMapper.selectByDishId(ids);
+       if (setmealIds != null && setmealIds.size()>0){
+           throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+       }
+
+//       删除菜品
+        dishMapper.deletBatch(ids);
+
+//       删除菜品关联的口味信息
+
+        dishFlavorMapper.deletBatch(ids);
+
     }
 }

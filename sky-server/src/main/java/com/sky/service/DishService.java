@@ -6,6 +6,8 @@ import com.sky.result.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface DishService {
     /**
@@ -14,6 +16,16 @@ public interface DishService {
      */
     public void saveAndFlavor(DishDTO dishDTO);
 
-
+    /**
+     * 分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 删除菜品
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }
