@@ -26,4 +26,8 @@ public interface DishMapper {
     List<Dish> selectByIds(List<Long> ids);
 
     void deletBatch( List<Long> dishIds);
+    @Select("select * from dish where id=#{id}")
+    Dish selectById(Long id);
+    @AutoFile(value = OperationType.UPDATE)
+    void update(Dish dish);
 }
